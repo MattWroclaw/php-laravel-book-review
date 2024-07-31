@@ -1,0 +1,1 @@
+1. Komenda do stworzenia projektu: ` composer create-project --prefer-dist laravel/laravel book-review`
