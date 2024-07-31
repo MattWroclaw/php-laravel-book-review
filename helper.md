@@ -24,3 +24,6 @@
   2024_07_31_095540_create_reviews_table .............................................................................................. 14.20ms DONE
 
   2. 5. Teraz scheam oraz table są w DB
+  3. *Reationship* One Book: many Rels. Book -> Parent_table; Review -> Child_table; W ./database/migrations w  Review tworzymy kolumnę z ForeignKey `$table->unsignedBigInteger('book_id');` Aby stworzyć relację robimy coś takiego w migration dla Review `$table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');` Po tym robimy update do DB: `php artisan migrate:reg=fresh` . Ale ralavel jeszcze nie wie że book+review są w relacji.
+  3. 1. Dodanie relacji po stonie Book: w app/Models dodajemy relację w funkcji reviews(), a po stronie Reviesws metodę `book()`.
+  3. 2. *Uwaga* Kolumna z foreign key w Review `book_id` jest w/g laravel convention, one-to-many. Model ma liczbę pojedynczą i automatycznie doda `_id`
