@@ -1,4 +1,4 @@
-1. Komenda do stworzenia projektu: ` composer create-project --prefer-dist laravel/laravel book-review`
+1. #### Komenda do stworzenia projektu: ` composer create-project --prefer-dist laravel/laravel book-review`
 2. Jeszcze nie włączyliśmy servera. Tworzymy Model: Book + Review
     1. `php artisan make:model Book -m`
     2. `php artisan make:model Review -v`
@@ -26,15 +26,17 @@
 >  2024_07_31_095540_create_reviews_table .............................................................................................. 14.20ms DONE
 >
     5. Teraz scheam oraz table są w DB
-3. *Reationship* One Book: many Rels. Book -> Parent_table; Review -> Child_table; W ./database/migrations w  Review tworzymy kolumnę z ForeignKey `$table->unsignedBigInteger('book_id');` Aby stworzyć relację robimy coś takiego w migration dla Review `$table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');` Po tym robimy update do DB: `php artisan migrate:reg=fresh` . Ale ralavel jeszcze nie wie że book+review są w relacji.
-    1. Dodanie relacji po stonie Book: w app/Models dodajemy relację w funkcji reviews(), a po stronie Reviesws metodę `book()`.
-    2. *Uwaga* Kolumna z foreign key w Review `book_id` jest w/g laravel convention, one-to-many. Model ma liczbę pojedynczą i automatycznie doda `_id`
+3. #### *Reationship*
+ One Book: many Rels. Book -> Parent_table; Review -> Child_table; W ./database/migrations w  Review tworzymy kolumnę z ForeignKey `$table->unsignedBigInteger('book_id');` Aby stworzyć relację robimy coś takiego w migration dla Review `$table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');` Po tym robimy update do DB: `php artisan migrate:reg=fresh` . Ale ralavel jeszcze nie wie że book+review są w relacji.
+  * 1. Dodanie relacji po stonie Book: w app/Models dodajemy relację w funkcji reviews(), a po stronie Reviesws metodę `book()`.
+  * 2. *Uwaga* Kolumna z foreign key w Review `book_id` jest w/g laravel convention, one-to-many. Model ma liczbę pojedynczą i automatycznie doda `_id`
 4. Napełnianie DB przykładowymi obiektami Book+Review. `php artisan make:factory BookFactory --model=Book` . 
   `php artisan make:factory ReviewFactory --model=Review`. W tych factorkach dodajemy `definition` dla tych 2 modeli. 
     1. W `./data/seeders/DataBaseSeeder.php` usuwamy pozostałości po Userze. Chcemy mieć X książek i żeby każda miała a-c reviews. Implementujemy w BookFactory i w ReviewFactory jak chcemy mieć pola a w DatabaseSeeder implementujemy funkcję `run` która nam stworzy daną ilość obiektów. 
     2. W cmd `php artisan migrate:refresh --seed` 
-5. *Tinker* `php arisan tinker`, Gdy tinker nie działa: `php artisan serve`  -> `.\routes\web.php` -> usuwamy ten boilerplate code z metody `Route::get` i wstawiamy `dd()` To zatrzymuje wykonanie i pokazuje rezultat (??) Pewnie coś a'la debug.
-    1. Chcemy pokazać Book + wszystkie Review z nią związane. `$book = \App\Models\Book::find(1);` 
+5. #### *Tinker* 
+`php arisan tinker`, Gdy tinker nie działa: `php artisan serve`  -> `.\routes\web.php` -> usuwamy ten boilerplate code z metody `Route::get` i wstawiamy `dd()` To zatrzymuje wykonanie i pokazuje rezultat (??) Pewnie coś a'la debug.
+  * 1. Chcemy pokazać Book + wszystkie Review z nią związane. `$book = \App\Models\Book::find(1);` 
   > *Uwaga!* Zauważ, że nazwa przestrzeni nazw App powinna być pisana z wielkiej litery. 
 
 To pokaże tylko samego Book, bez review. 
@@ -70,7 +72,7 @@ Lepiej to zrobić tak:
 
 Sprawdzenie czy jest ten Review: `$book->revievs;`
 
-# Uwaga:
+**Uwaga:**
 *facet po każdej komendzie robi restart tinker'a. To jest po to, że jak się zmieni coś w kodzie to tinker na nowo wszystko zaciąga. Nie widzi bieżących zmian, jak CMD..
 
 5. 6. PreWork: Wchodzimy do Review.php i tworzymy `$fillable` czyli będzie można je zrobić `Mass assigned`. (trzeba restart tinker), następnie `$book=\App\Models\Book::find(2);` 
@@ -163,3 +165,24 @@ Przepisanie
       updated_at: "2024-07-14 10:12:53",
     },
   }
+6. #### Query Scopes
+Warto sprawdzić docu odnośnie QueryBuilder.  
+Pokaż książki z "qui" w tytule :  `\App\Models\Book::where('title', 'LIKE' , '%delectus%')->get();`  
+Naszym zadaniem jest aby to query zaimplementować w kodzie. W medelu Book tworzymy metodę która zrobi to samo co powyższe query. **Uwaga:*** Nazwa tej metody musi się zaczynać od słówka _scope_ CośtamCośtam. I import musi być taki: `use Illuminate\Database\Eloquent\Builder;`  Tworzymy metodę `scopeTitle` i następnie wywołująmy ją w tinkerze: `\App\Models\Book::title('delectus')->get();`   
+Mając tą metodę możemy jej użyć też tak: `\App\Models\Book::title('delectus')->where('created_at', '>' , '2023-09-05')->get();`  
+**Uwaga:** Jak chcemy sobie podejrzeć jakie pod spodem jest sql query to robimy `toSql()`  
+\App\Models\Book::title('delectus')->where('created_at', '>' ,'2023-09-05')->toSql();                                                            
+= "select * from `books` where `title` LIKE ? and `created_at` > ?"  
+
+7.  #### Aggregations   
+Te metody bierze z dokumentacji Laravela
+- counting: `\App\Models\Book::withCount('revievs')->get();` teraz widzimy, że każdy Book ma coś podobnego: `revievs_count: 19,`  
+latest() jest wbudowane w laravela `\App\Models\Book::withCount('revievs')->latest()->limit(3)->get();`   
+**Uwaga:** `q` robi że tinker się wyłącza.  
+- average: 5 książek z najmniejszym rating: (porządek metod w query nie ma znaczenia)  
+`\App\Models\Book::limit(5)->withAvg('revievs', 'rating')->orderBy('revievs_avg_rating')->get();`  
+`revievs_avg_rating` -> Laravel to przeczyta :: relationship_funkcja_kolumna.  
+
+Najlepsze książki, ale muszą mieć conajmniej 10 recenzji.  
+`\App\Models\Book::withCount('revievs')->withAvg('revievs', 'rating')->having('revievs_count', '>', 10 )->orderBy('revievs_avg_rating', 'desc')->l
+imit(5)->get();`  
