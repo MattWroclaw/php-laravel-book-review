@@ -190,3 +190,24 @@ Budujemy scope query w Books `scopePopular` i możemy ją wywołać z tinkera za
 
 8. **Arrow function** ` 'revievs' => fn(Builder $q) => $this->dateRangeFilter($q, $from, $to)` , możemy stosować skrót `fn` . `=>` to jest zaminast nawiasów {} . W Arrow funciotn może być tylko jedno wyrażenie. Nie potrzeba na końcu `;` . W a/f nie dodajemy `use()` dla zewnętrznych zmiennych. Zewnętrzne zmienne , np. $from, $to są dostępne dla a/f.  
 *Uwaga:* Jak się działa na _aggregate_ _functions_ to trzeba korzystać z `having` a nie z `where`. 
+
+9. #### Controllers ####
+ Nazwy `routes` które robią CRUD muszą być zgodne z nomeklaturą `store, crete, show, update, edit, destroy` . To na czym się wykonuje te operacje CRUD to jest `resource` (w poporzedniej appce to Task)
+    1. **Resource controllers**  
+    W resource controllers wszystkie nazwy route's będą generowane automatycznie. Np `task.show`  
+
+
+| Verb      | URI                  | Action  | Route Name     |   |
+|-----------|----------------------|---------|----------------|---|
+| GET        | /photos              | index   | photos.index   |   |
+| GET       | /photos/create       | create  | photos.create  |   |
+| POST      | /photos              | store   | photos.store   |   |
+| GET       | /photos/{photo}      | show    | photos.show    |   |
+| GET       | /photos/{photo}/edit | edit    | photos.edit    |   |
+| PUT/PATCH | /photos/{photo}      | update  | photos.update  |   |
+| DELETE    | /photos/{photo}      | destroy | photos.destroy |   |
+
+  2. Tworzenie controlerra  
+    `php artisan make:controller PhotoController --resource` . Stworzy się nowa klasa w app/Http/Controllers . Następnie rejestrujemy resource route który wskazuje na ten kontroller w `web.php` poprzez dodanie `Route::resource('books' , BookController::class);`  
+    Sprawdzenie poprzez `php artisan route:list` Powinny być widoczne wszystkie PUT, DELETE, GET..
+    **Uwaga:** to wszystko mocno opiera się na namig convention. 
