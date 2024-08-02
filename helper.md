@@ -214,3 +214,8 @@ Budujemy scope query w Books `scopePopular` i możemy ją wywołać z tinkera za
   3. Implementacja Controllera: metoda `when`  
   $books = Book::when($title, function(){}) --> wywoła funkcję gdy $title nie będzie null.   
   Metoda `compact('books')` -> znajduje zmienną 'books' , zamienia ją na  [], to jest zamiast   ['books' =>$books]
+
+10. **Uwaga:** dotycząca lini w index.blade.php ` <a href=" {{ route('books.index' , [...request()->query()  ,'filter123' => $key]) }} "`  
+`request()->query()` jest tablicą samą w sobie, wiec stosujemy `spread operator` czyli to wypakowuje każdy element z tej tablicy i daje go do tablicy w parametrze `route( )`  
+`request()->query()` w Laravelu zwraca wszystkie parametry zapytania HTTP jako tablicę asocjacyjną. W kontekście Twojego kodu, `request()->query()` pobiera wszystkie parametry zapytania z bieżącego URL-a i przekazuje je do funkcji `route()`, aby zachować te parametry w nowym URL-u.  
+W skrócie, request()->query() pozwala na zachowanie wszystkich istniejących parametrów zapytania w nowym URL-u, co jest przydatne przy filtrowaniu lub paginacji.
