@@ -199,7 +199,7 @@ Budujemy scope query w Books `scopePopular` i możemy ją wywołać z tinkera za
 
 | Verb      | URI                  | Action  | Route Name     |   |
 |-----------|----------------------|---------|----------------|---|
-| GET        | /photos              | index   | photos.index   |   |
+| GET       | /photos              | index   | photos.index   |   |
 | GET       | /photos/create       | create  | photos.create  |   |
 | POST      | /photos              | store   | photos.store   |   |
 | GET       | /photos/{photo}      | show    | photos.show    |   |
@@ -211,3 +211,6 @@ Budujemy scope query w Books `scopePopular` i możemy ją wywołać z tinkera za
     `php artisan make:controller PhotoController --resource` . Stworzy się nowa klasa w app/Http/Controllers . Następnie rejestrujemy resource route który wskazuje na ten kontroller w `web.php` poprzez dodanie `Route::resource('books' , BookController::class);`  
     Sprawdzenie poprzez `php artisan route:list` Powinny być widoczne wszystkie PUT, DELETE, GET..
     **Uwaga:** to wszystko mocno opiera się na namig convention. 
+  3. Implementacja Controllera: metoda `when`  
+  $books = Book::when($title, function(){}) --> wywoła funkcję gdy $title nie będzie null.   
+  Metoda `compact('books')` -> znajduje zmienną 'books' , zamienia ją na  [], to jest zamiast   ['books' =>$books]
