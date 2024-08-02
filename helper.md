@@ -186,3 +186,7 @@ latest() jest wbudowane w laravela `\App\Models\Book::withCount('revievs')->late
 Najlepsze książki, ale muszą mieć conajmniej 10 recenzji.  
 `\App\Models\Book::withCount('revievs')->withAvg('revievs', 'rating')->having('revievs_count', '>', 10 )->orderBy('revievs_avg_rating', 'desc')->l
 imit(5)->get();`  
+Budujemy scope query w Books `scopePopular` i możemy ją wywołać z tinkera za pomocą `\App\Modles\Book::scopePopular()->get();` i ona robi to samo co query z tinkera. 
+
+8. **Arrow function** ` 'revievs' => fn(Builder $q) => $this->dateRangeFilter($q, $from, $to)` , możemy stosować skrót `fn` . `=>` to jest zaminast nawiasów {} . W Arrow funciotn może być tylko jedno wyrażenie. Nie potrzeba na końcu `;` . W a/f nie dodajemy `use()` dla zewnętrznych zmiennych. Zewnętrzne zmienne , np. $from, $to są dostępne dla a/f.  
+*Uwaga:* Jak się działa na _aggregate_ _functions_ to trzeba korzystać z `having` a nie z `where`. 
