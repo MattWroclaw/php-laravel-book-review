@@ -177,7 +177,7 @@ Mając tą metodę możemy jej użyć też tak: `\App\Models\Book::title('delect
 7.  #### Aggregations   
 Te metody bierze z dokumentacji Laravela
 - counting: `\App\Models\Book::withCount('revievs')->get();` teraz widzimy, że każdy Book ma coś podobnego: `revievs_count: 19,`  
-latest() jest wbudowane w laravela `\App\Models\Book::withCount('revievs')->latest()->limit(3)->get();`   
+*latest()* jest wbudowane w laravela `\App\Models\Book::withCount('revievs')->latest()->limit(3)->get();`   
 **Uwaga:** `q` robi że tinker się wyłącza.  
 - average: 5 książek z najmniejszym rating: (porządek metod w query nie ma znaczenia)  
 `\App\Models\Book::limit(5)->withAvg('revievs', 'rating')->orderBy('revievs_avg_rating')->get();`  
@@ -219,3 +219,9 @@ Budujemy scope query w Books `scopePopular` i możemy ją wywołać z tinkera za
 `request()->query()` jest tablicą samą w sobie, wiec stosujemy `spread operator` czyli to wypakowuje każdy element z tej tablicy i daje go do tablicy w parametrze `route( )`  
 `request()->query()` w Laravelu zwraca wszystkie parametry zapytania HTTP jako tablicę asocjacyjną. W kontekście Twojego kodu, `request()->query()` pobiera wszystkie parametry zapytania z bieżącego URL-a i przekazuje je do funkcji `route()`, aby zachować te parametry w nowym URL-u.  
 W skrócie, request()->query() pozwala na zachowanie wszystkich istniejących parametrów zapytania w nowym URL-u, co jest przydatne przy filtrowaniu lub paginacji.
+11. `match` -> to nie jest funkcja, to jest część języka. Jest to podobne do `switch`. W argumecie przekazuje się wartość filtra. Następnie definiuje się możliwe wartości , np popular_last_month; jeśli się zgadza to można wywołać odpowiednią funkcję.  
+12. Do debugowania nadaje się to:
+* dd($books);
+* dump($filter);
+* error_log("Mateusz filter-->"  . $filter);  
+

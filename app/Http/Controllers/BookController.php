@@ -22,7 +22,27 @@ class BookController extends Controller
 */
         // to samo za pomocą arrow function
         $books = Book::when($title, 
-        fn($query, $title) => $query->title($title))->get();
+        fn($query, $title) => $query->title($title));
+    // get() nie jest wywoływane, bo chcemy zmienić warunki zapytania
+        $filter = $request->input('filter123', '');
+        // input -> pobiera dane z formularza
+        // 'filter' -> nazwa pola w formularzu
+
+        
+        $books = match($filter){
+            'popular_last_month' => $books->popularLastMonth(),
+            'popular_last_6months' => $books->popularLast6Months(),
+            'highest_rated_last_month' => $books->highestRatedLastMonth(),
+            'highest_rated_last_6months' => $books->popularLast6Months(),
+            default => $books->latest()
+        };
+        
+        $books = $books->get();
+
+        // dd($books);
+        // dump($filter);
+        error_log("Mateusz filter-->" . $filter);
+        error_log("Mateusz2 books -->" . $books);
 
         return view('books.index', ['books' => $books]);
     }
