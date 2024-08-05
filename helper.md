@@ -224,4 +224,6 @@ W skrócie, request()->query() pozwala na zachowanie wszystkich istniejących pa
 * dd($books);
 * dump($filter);
 * error_log("Mateusz filter-->"  . $filter);  
-
+13. Przykład *Lazy load* (show.blade.php) `$book->revievs ` . To jest wtedy, gdy dostajemy się  do relationship za pomocą property-name a nie metodą, 
+14. Gdy model już jest załodowany (w show.view) to można posortować jego zależności. Robi się  to w rontorlerze za pomocą metody `load`.   
+Dla przypomnienia, `latest()` jest funkcją wbudowaną w laravela.

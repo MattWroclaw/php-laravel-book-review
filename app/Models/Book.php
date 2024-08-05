@@ -31,6 +31,20 @@ class Book extends Model
         ->orderBy('revievs_count', 'desc');
     }
 
+    public function scopeWithReviewsCount(Builder $query, $from = null, $to = null): Builder|QueryBuilder
+    {
+        return $query->withCount([
+            'revievs' => fn(Builder $q) => $this->dateRangeFilter($q, $from, $to)
+        ]);
+    }
+
+    public function scopeWithAvgRating(Builder $query, $from = null, $to = null): Builder|QueryBuilder
+    {
+        return $query->withAvg([
+            'revievs' => fn(Builder $q) => $this->dateRangeFilter($q, $from, $to)
+        ], 'rating');
+    }
+
     public function scopeHighestRated(Builder $query, $from=null, $to=null) :Builder {
         return $query->withAvg(
             [

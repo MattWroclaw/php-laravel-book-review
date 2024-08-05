@@ -34,15 +34,15 @@ class BookController extends Controller
             'popular_last_6months' => $books->popularLast6Months(),
             'highest_rated_last_month' => $books->highestRatedLastMonth(),
             'highest_rated_last_6months' => $books->popularLast6Months(),
-            default => $books->latest()
+            default => $books->latest()->withAvgRating()->withReviewsCount()
         };
         
         $books = $books->get();
 
         // dd($books);
         // dump($filter);
-        error_log("Mateusz filter-->" . $filter);
-        error_log("Mateusz2 books -->" . $books);
+        // error_log("Mateusz filter-->" . $filter);
+        // error_log("Mateusz2 books -->" . $books);
 
         return view('books.index', ['books' => $books]);
     }
@@ -68,9 +68,21 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Book $book) 
     {
-        //
+        // to ma lepszy perfomance ale cośtam nie działa i przy widoku Book wyświetla Reviews w różnej kolejności
+        // return view('books.show', ['book' => $book]);
+
+        return view(
+            'books.show',
+            [
+                'book' => $book->load([
+                        'revievs' => fn($query) => $query->latest()
+                    ])
+            ]
+        );
+        
+
     }
 
     /**
